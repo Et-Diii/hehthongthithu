@@ -732,6 +732,14 @@
         .strength-segment.active {
             background: var(--success-color);
         }
+
+        /* Avatar Image */
+        .avatar-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -757,10 +765,12 @@
             <div class="profile-cover"></div>
             <div class="profile-avatar">
                 <div class="avatar-inner" id="avatarInitials">NA</div>
+                <img class="avatar-image" id="avatarImage" src="" alt="Avatar" style="display: none;">
             </div>
             <div class="profile-info">
                 <h2 class="profile-name" id="profileName">Đang tải...</h2>
                 <div class="profile-email" id="profileEmail">Đang tải...</div>
+                <div class="profile-email" id="profileUsername">Đang tải...</div>
                 <div class="profile-badge" id="profileBadge">
                     <i class="fas fa-crown"></i> Học viên
                 </div>
@@ -931,12 +941,6 @@
                         </div>
                         <div class="info-item">
                             <div class="info-label">
-                                <i class="fas fa-venus-mars"></i> Giới tính
-                            </div>
-                            <div class="info-value" id="personalGender">Đang tải...</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">
                                 <i class="fas fa-map-marker-alt"></i> Địa chỉ
                             </div>
                             <div class="info-value" id="personalAddress">Đang tải...</div>
@@ -949,18 +953,13 @@
                         </div>
                         <div class="info-item">
                             <div class="info-label">
-                                <i class="fas fa-graduation-cap"></i> Lớp
+                                <i class="fas fa-image"></i> Avatar
                             </div>
-                            <div class="info-value" id="personalClass">Đang tải...</div>
+                            <div class="info-value" id="personalAvatar">
+                                <img id="avatarPreview" src="" alt="Avatar" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; display: none;">
+                                <span id="avatarText">Chưa có</span>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="section-title" style="margin-top: 30px;">
-                        <h2><i class="fas fa-info-circle" style="color: var(--primary-color); margin-right: 10px;"></i> Giới thiệu</h2>
-                    </div>
-
-                    <div class="info-item" style="background: var(--light-bg); padding: 20px;">
-                        <p id="personalBio" style="line-height: 1.8;">Đang tải...</p>
                     </div>
                 </div>
 
@@ -998,31 +997,6 @@
                                 <i class="fas fa-save"></i> Cập nhật mật khẩu
                             </button>
                         </form>
-                    </div>
-
-                    <div class="settings-group">
-                        <h3>Xác thực 2 lớp (2FA)</h3>
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <h4>Bảo mật nâng cao</h4>
-                                <p>Bảo vệ tài khoản với xác thực hai lớp</p>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" id="twoFactor">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="settings-group">
-                        <h3>Phiên đăng nhập</h3>
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <h4>Thiết bị hiện tại</h4>
-                                <p id="currentDevice">Đang tải...</p>
-                            </div>
-                            <span style="color: var(--success-color);">Đang hoạt động</span>
-                        </div>
                     </div>
                 </div>
 
@@ -1087,22 +1061,18 @@
                 </div>
 
                 <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" class="form-control" id="editEmail" required>
+                </div>
+
+                <div class="form-group">
                     <label><i class="fas fa-phone"></i> Số điện thoại</label>
                     <input type="tel" class="form-control" id="editPhone">
                 </div>
 
                 <div class="form-group">
                     <label><i class="fas fa-calendar"></i> Ngày sinh</label>
-                    <input type="date" class="form-control" id="editBirthday">
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-venus-mars"></i> Giới tính</label>
-                    <select class="form-control" id="editGender">
-                        <option value="Nam">Nam</option>
-                        <option value="Nữ">Nữ</option>
-                        <option value="Khác">Khác</option>
-                    </select>
+                    <input type="date" class="form-control" id="editDateOfBirth">
                 </div>
 
                 <div class="form-group">
@@ -1113,16 +1083,6 @@
                 <div class="form-group">
                     <label><i class="fas fa-school"></i> Trường học</label>
                     <input type="text" class="form-control" id="editSchool">
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-graduation-cap"></i> Lớp</label>
-                    <input type="text" class="form-control" id="editClass">
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-info-circle"></i> Giới thiệu</label>
-                    <textarea class="form-control" id="editBio"></textarea>
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -1169,15 +1129,25 @@
     // Load profile
     async function loadProfile() {
         try {
-            const response = await fetch(`http://localhost:8080/api/auth/profile`, {
+            const response = await fetch(`http://localhost:8080/api/profile`, {
+                method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
                 }
             });
             
-            if (!response.ok) throw new Error('Failed to load profile');
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                throw new Error('Failed to load profile');
+            }
             
             const data = await response.json();
+            console.log('Profile data:', data);
             userProfile = data;
             
             // Update UI with profile data
@@ -1194,31 +1164,45 @@
         // Sidebar
         document.getElementById('profileName').textContent = data.fullName || 'Chưa cập nhật';
         document.getElementById('profileEmail').textContent = data.email || 'Chưa cập nhật';
+        document.getElementById('profileUsername').textContent = '@' + (data.username || 'username');
         
         // Avatar initials
         if (data.fullName) {
-            const initials = data.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-            document.getElementById('avatarInitials').textContent = initials;
+            const nameParts = data.fullName.split(' ');
+            let initials = '';
+            if (nameParts.length >= 2) {
+                initials = nameParts[0][0] + nameParts[nameParts.length-1][0];
+            } else if (nameParts.length === 1) {
+                initials = nameParts[0].substring(0, 2);
+            }
+            document.getElementById('avatarInitials').textContent = initials.toUpperCase();
         }
         
         // Avatar image
         if (data.avatar) {
             document.getElementById('avatarImage').src = data.avatar;
-            document.getElementById('avatarImage').style.display = 'inline';
+            document.getElementById('avatarImage').style.display = 'block';
+            document.getElementById('avatarInitials').style.display = 'none';
+            
+            document.getElementById('avatarPreview').src = data.avatar;
+            document.getElementById('avatarPreview').style.display = 'block';
             document.getElementById('avatarText').style.display = 'none';
+        } else {
+            document.getElementById('avatarImage').style.display = 'none';
+            document.getElementById('avatarInitials').style.display = 'flex';
         }
         
         // Contact info
         document.getElementById('contactPhone').textContent = data.phone || 'Chưa cập nhật';
         document.getElementById('contactAddress').textContent = data.address || 'Chưa cập nhật';
-        document.getElementById('contactBirthday').textContent = data.dob || 'Chưa cập nhật';
+        document.getElementById('contactBirthday').textContent = data.dateOfBirth || 'Chưa cập nhật';
         document.getElementById('contactSchool').textContent = data.school || 'Chưa cập nhật';
         
         // Personal info tab
         document.getElementById('personalName').textContent = data.fullName || 'Chưa cập nhật';
         document.getElementById('personalEmail').textContent = data.email || 'Chưa cập nhật';
         document.getElementById('personalPhone').textContent = data.phone || 'Chưa cập nhật';
-        document.getElementById('personalBirthday').textContent = data.dob || 'Chưa cập nhật';
+        document.getElementById('personalBirthday').textContent = data.dateOfBirth || 'Chưa cập nhật';
         document.getElementById('personalAddress').textContent = data.address || 'Chưa cập nhật';
         document.getElementById('personalSchool').textContent = data.school || 'Chưa cập nhật';
         
@@ -1226,7 +1210,7 @@
         document.getElementById('editName').value = data.fullName || '';
         document.getElementById('editEmail').value = data.email || '';
         document.getElementById('editPhone').value = data.phone || '';
-        document.getElementById('editDob').value = data.dob || '';
+        document.getElementById('editDateOfBirth').value = data.dateOfBirth || '';
         document.getElementById('editAddress').value = data.address || '';
         document.getElementById('editSchool').value = data.school || '';
     }
@@ -1235,30 +1219,29 @@
     async function updateProfile(e) {
         e.preventDefault();
         
-        const formData = new FormData();
-        formData.append('fullName', document.getElementById('editName').value);
-        formData.append('email', document.getElementById('editEmail').value);
-        formData.append('phone', document.getElementById('editPhone').value);
-        formData.append('dob', document.getElementById('editDob').value);
-        formData.append('address', document.getElementById('editAddress').value);
-        formData.append('school', document.getElementById('editSchool').value);
+        const updateData = {
+            fullName: document.getElementById('editName').value,
+            email: document.getElementById('editEmail').value,
+            phone: document.getElementById('editPhone').value,
+            dateOfBirth: document.getElementById('editDateOfBirth').value,
+            address: document.getElementById('editAddress').value,
+            school: document.getElementById('editSchool').value
+        };
         
-        const avatarFile = document.getElementById('editAvatar').files[0];
-        if (avatarFile) {
-            formData.append('avatar', avatarFile);
-        }
+        console.log('Updating profile with:', updateData);
         
         const btn = document.getElementById('saveProfileBtn');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang lưu...';
         
         try {
-            const response = await fetch(`${API_BASE_URL}/profile`, {
+            const response = await fetch(`http://localhost:8080/api/profile`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${authToken}`
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
                 },
-                body: formData
+                body: JSON.stringify(updateData)
             });
             
             if (response.ok) {
@@ -1306,7 +1289,7 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
         
         try {
-            const response = await fetch(`http://localhost:8080/api/auth/profile/change-password`, {
+            const response = await fetch(`http://localhost:8080/api/profile/change-password`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1358,6 +1341,14 @@
 
         const levels = ['Rất yếu', 'Yếu', 'Trung bình', 'Khá', 'Mạnh', 'Rất mạnh'];
         strengthText.textContent = `Độ mạnh: ${levels[strength]}`;
+        
+        if (strength >= 4) {
+            strengthText.style.color = 'var(--success-color)';
+        } else if (strength >= 2) {
+            strengthText.style.color = 'var(--warning-color)';
+        } else {
+            strengthText.style.color = 'var(--danger-color)';
+        }
     }
 
     // Load activities
@@ -1365,7 +1356,8 @@
         // Mock data
         const activities = [
             { icon: 'pencil-alt', title: 'Hoàn thành đề thi thử ĐGNL', description: 'Đạt 85/150 câu đúng', time: '2 giờ trước' },
-            { icon: 'book-open', title: 'Học xong bài 8: Hình học không gian', description: 'Khóa Toán 12', time: 'Hôm qua' }
+            { icon: 'book-open', title: 'Học xong bài 8: Hình học không gian', description: 'Khóa Toán 12', time: 'Hôm qua' },
+            { icon: 'download', title: 'Tải tài liệu: Công thức Toán 12', description: 'PDF - 2.5 MB', time: 'Hôm qua' }
         ];
         
         document.getElementById('activityList').innerHTML = activities.map(a => `
@@ -1395,7 +1387,9 @@
     function loadAchievements() {
         const achievements = [
             { icon: 'fire', title: 'Chiến binh', desc: 'Học 30 ngày liên tiếp', progress: '15/30' },
-            { icon: 'pencil-alt', title: 'Thợ săn đề thi', desc: 'Hoàn thành 50 đề thi', progress: '47/50' }
+            { icon: 'pencil-alt', title: 'Thợ săn đề thi', desc: 'Hoàn thành 50 đề thi', progress: '47/50' },
+            { icon: 'star', title: 'Học viên xuất sắc', desc: 'Điểm TB trên 9.0', progress: '8.2' },
+            { icon: 'trophy', title: 'Top 1 tháng', desc: 'Xếp hạng nhất tháng', progress: 'Top 5%' }
         ];
         
         document.getElementById('achievementsList').innerHTML = achievements.map(a => `
@@ -1428,14 +1422,22 @@
 
     // Show alert
     function showAlert(type, message) {
-        const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+        const icons = { 
+            success: 'fa-check-circle', 
+            error: 'fa-exclamation-circle', 
+            info: 'fa-info-circle' 
+        };
+        
         document.getElementById('alertContainer').innerHTML = `
             <div class="alert alert-${type}">
                 <i class="fas ${icons[type]}"></i>
                 <span>${message}</span>
             </div>
         `;
-        setTimeout(() => document.getElementById('alertContainer').innerHTML = '', 5000);
+        
+        setTimeout(() => {
+            document.getElementById('alertContainer').innerHTML = '';
+        }, 5000);
     }
 
     // Logout
@@ -1447,8 +1449,10 @@
     // Close modal when clicking outside
     window.onclick = function(event) {
         const modal = document.getElementById('editProfileModal');
-        if (event.target === modal) closeEditProfileModal();
+        if (event.target === modal) {
+            closeEditProfileModal();
+        }
     };
-</script>
+    </script>
 </body>
 </html>
