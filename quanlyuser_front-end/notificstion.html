@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông báo - Luyện Thi ĐGNL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --light-bg: #f3f4f6;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 5px 20px rgba(0, 0, 0, 0.15);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            background: var(--light-bg);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Main Container */
+        .notification-container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        /* Header */
+        .notification-header {
+            background: var(--gradient-primary);
+            color: var(--white);
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .notification-badge {
+            background: var(--accent-color);
+            color: var(--white);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-actions button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: var(--white);
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .header-actions button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            background: var(--white);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        .filter-btn i {
+            font-size: 0.9rem;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+            min-width: 250px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 45px;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Loading State */
+        .loading-state {
+            padding: 60px 30px;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        .loading-state i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 60px 30px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            color: var(--text-light);
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--text-light);
+            margin-bottom: 25px;
+        }
+
+        .browse-btn {
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .browse-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Notification List */
+        .notification-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .notification-item:hover {
+            background: var(--light-bg);
+        }
+
+        .notification-item.unread {
+            background: #f0f9ff;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .notification-item.unread:hover {
+            background: #e0f2fe;
+        }
+
+        /* Notification Icon */
+        .notification-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .notification-icon.warning {
+            background: linear-gradient(135deg, #f59e0b20, #fbbf2420);
+            color: var(--warning-color);
+        }
+
+        .notification-icon.success {
+            background: linear-gradient(135deg, #10b98120, #34d39920);
+            color: var(--success-color);
+        }
+
+        .notification-icon.danger {
+            background: linear-gradient(135deg, #ef444420, #f8717120);
+            color: var(--danger-color);
+        }
+
+        /* Notification Content */
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-time i {
+            font-size: 0.7rem;
+        }
+
+        .notification-message {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        /* Notification Meta */
+        .notification-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+        }
+
+        .notification-type {
+            background: var(--light-bg);
+            padding: 3px 10px;
+            border-radius: 50px;
+            color: var(--text-light);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-type i {
+            color: var(--primary-color);
+        }
+
+        .notification-target {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-target:hover {
+            text-decoration: underline;
+        }
+
+        /* Unread Dot */
+        .unread-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Loading More */
+        .loading-more {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        .loading-more i {
+            margin-right: 8px;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Error Message */
+        .error-message {
+            margin: 20px 30px;
+            padding: 15px 20px;
+            background: #fee2e2;
+            border-radius: 10px;
+            color: var(--danger-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .error-message i {
+            font-size: 1.2rem;
+        }
+
+        .retry-btn {
+            margin-left: auto;
+            background: var(--danger-color);
+            color: var(--white);
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .retry-btn:hover {
+            background: #dc2626;
+        }
+
+        /* Pagination */
+        .pagination {
+            padding: 20px 30px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pagination-info {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            background: var(--white);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Mark as Read Button */
+        .mark-read-btn {
+            position: absolute;
+            right: 30px;
+            top: 20px;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-item:hover .mark-read-btn {
+            display: flex;
+        }
+
+        .mark-read-btn:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .notification-container {
+                margin: 10px 0;
+                border-radius: 15px;
+            }
+
+            .notification-header {
+                padding: 20px;
+            }
+
+            .header-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .filter-bar {
+                padding: 15px 20px;
+            }
+
+            .notification-item {
+                padding: 15px 20px;
+            }
+
+            .unread-dot {
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .header-actions {
+                flex-direction: column;
+            }
+
+            .notification-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification-container">
+        <!-- Header -->
+        <div class="notification-header">
+            <div class="header-title">
+                <h1>Thông báo</h1>
+                <span class="notification-badge" id="notificationCount">12 mới</span>
+            </div>
+            <div class="header-actions">
+                <button id="markAllReadBtn">
+                    <i class="fas fa-check-double"></i>
+                    Đánh dấu tất cả
+                </button>
+                <button id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Làm mới
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fas fa-bell"></i>
+                Tất cả
+            </button>
+            <button class="filter-btn" data-filter="unread">
+                <i class="fas fa-envelope"></i>
+                Chưa đọc
+            </button>
+            <button class="filter-btn" data-filter="exam">
+                <i class="fas fa-pencil-alt"></i>
+                Đề thi
+            </button>
+            <button class="filter-btn" data-filter="course">
+                <i class="fas fa-book"></i>
+                Khóa học
+            </button>
+            <button class="filter-btn" data-filter="system">
+                <i class="fas fa-cog"></i>
+                Hệ thống
+            </button>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Tìm kiếm thông báo..." id="searchInput">
+            </div>
+        </div>
+
+        <!-- Error Message (hidden by default) -->
+        <div class="error-message" id="errorMessage" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="errorText">Không thể tải thông báo. Vui lòng thử lại.</span>
+            <button class="retry-btn" onclick="fetchNotifications()">
+                <i class="fas fa-redo"></i> Thử lại
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState">
+            <i class="fas fa-spinner"></i>
+            <p>Đang tải thông báo...</p>
+        </div>
+
+        <!-- Empty State (hidden by default) -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">
+                <i class="far fa-bell-slash"></i>
+            </div>
+            <h3>Bạn chưa có thông báo nào</h3>
+            <p>Hãy tham gia các khóa học và luyện đề để nhận thông báo mới nhất!</p>
+            <button class="browse-btn" onclick="window.location.href='courses.html'">
+                <i class="fas fa-book-open"></i>
+                Khám phá khóa học
+            </button>
+        </div>
+
+        <!-- Notification List -->
+        <div class="notification-list" id="notificationList">
+            <!-- Notifications will be dynamically inserted here -->
+        </div>
+
+        <!-- Loading More -->
+        <div class="loading-more" id="loadingMore" style="display: none;">
+            <i class="fas fa-spinner"></i>
+            Đang tải thêm...
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <div class="pagination-info" id="paginationInfo">
+                Hiển thị 1-5 của 23 thông báo
+            </div>
+            <div class="pagination-controls">
+                <button class="page-btn" id="prevPage" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="page-btn" id="nextPage">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Sample notification data
+        const notifications = [
+            {
+                id: 1,
+                type: 'exam',
+                title: 'Đề thi mới được thêm',
+                message: 'Đề thi thử ĐGNL ĐHQG Hà Nội đợt 1 vừa được cập nhật. Hãy thử sức ngay!',
+                time: '5 phút trước',
+                targetType: 'exam',
+                targetId: 'exam_001',
+                targetName: 'ĐGNL Hà Nội 2024',
+                read: false,
+                icon: 'fa-pencil-alt',
+                iconClass: 'warning'
+            },
+            {
+                id: 2,
+                type: 'course',
+                title: 'Bài học mới',
+                message: 'Bài 9: Hình học không gian đã được mở trong khóa học Toán 12',
+                time: '30 phút trước',
+                targetType: 'course',
+                targetId: 'course_math_12',
+                targetName: 'Toán 12',
+                read: false,
+                icon: 'fa-book',
+                iconClass: 'success'
+            },
+            {
+                id: 3,
+                type: 'system',
+                title: 'Cập nhật hệ thống',
+                message: 'Hệ thống đã được nâng cấp với nhiều tính năng mới. Trải nghiệm ngay!',
+                time: '2 giờ trước',
+                targetType: 'system',
+                targetId: 'system_update',
+                targetName: 'Xem chi tiết',
+                read: true,
+                icon: 'fa-cog',
+                iconClass: ''
+            },
+            {
+                id: 4,
+                type: 'exam',
+                title: 'Kết quả bài thi',
+                message: 'Bạn đã đạt 85/150 điểm trong đề thi thử ĐGNL TP.HCM. Xem chi tiết kết quả.',
+                time: '1 ngày trước',
+                targetType: 'result',
+                targetId: 'result_001',
+                targetName: 'Xem kết quả',
+                read: true,
+                icon: 'fa-chart-line',
+                iconClass: 'success'
+            },
+            {
+                id: 5,
+                type: 'warning',
+                title: 'Sắp đến hạn thi',
+                message: 'Kỳ thi thử ĐGNL đợt 2 sẽ diễn ra vào 15/11/2024. Đừng quên tham gia nhé!',
+                time: '1 ngày trước',
+                targetType: 'exam',
+                targetId: 'exam_002',
+                targetName: 'Xem lịch thi',
+                read: false,
+                icon: 'fa-clock',
+                iconClass: 'danger'
+            },
+            {
+                id: 6,
+                type: 'comment',
+                title: 'Bình luận mới',
+                message: 'Thầy Nam đã trả lời câu hỏi của bạn trong diễn đàn',
+                time: '2 ngày trước',
+                targetType: 'forum',
+                targetId: 'forum_001',
+                targetName: 'Xem bình luận',
+                read: true,
+                icon: 'fa-comment',
+                iconClass: ''
+            },
+            {
+                id: 7,
+                type: 'achievement',
+                title: 'Thành tích mới',
+                message: 'Chúc mừng! Bạn đã hoàn thành 7 ngày học liên tiếp.',
+                time: '3 ngày trước',
+                targetType: 'achievement',
+                targetId: 'achievement_001',
+                targetName: 'Xem thành tích',
+                read: false,
+                icon: 'fa-trophy',
+                iconClass: 'success'
+            }
+        ];
+
+        let currentFilter = 'all';
+        let currentPage = 1;
+        const itemsPerPage = 5;
+        let filteredNotifications = [...notifications];
+
+        // DOM Elements
+        const notificationList = document.getElementById('notificationList');
+        const loadingState = document.getElementById('loadingState');
+        const emptyState = document.getElementById('emptyState');
+        const errorMessage = document.getElementById('errorMessage');
+        const loadingMore = document.getElementById('loadingMore');
+        const notificationCount = document.getElementById('notificationCount');
+        const searchInput = document.getElementById('searchInput');
+        const prevPage = document.getElementById('prevPage');
+        const nextPage = document.getElementById('nextPage');
+        const paginationInfo = document.getElementById('paginationInfo');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchNotifications();
+            setupEventListeners();
+        });
+
+        // Fetch notifications (simulate API call)
+        function fetchNotifications() {
+            showLoading();
+            
+            // Simulate API call
+            setTimeout(() => {
+                try {
+                    // Check if there are notifications
+                    if (filteredNotifications.length > 0) {
+                        renderNotifications();
+                        updateNotificationCount();
+                        hideLoading();
+                    } else {
+                        showEmptyState();
+                    }
+                } catch (error) {
+                    showError('Không thể tải thông báo. Vui lòng thử lại.');
+                }
+            }, 1500);
+        }
+
+        // Render notifications
+        function renderNotifications() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedNotifications = filteredNotifications.slice(start, end);
+            
+            notificationList.innerHTML = paginatedNotifications.map(notification => `
+                <div class="notification-item ${!notification.read ? 'unread' : ''}" 
+                     data-id="${notification.id}"
+                     data-target-type="${notification.targetType}"
+                     data-target-id="${notification.targetId}">
+                    
+                    <div class="notification-icon ${notification.iconClass}">
+                        <i class="fas ${notification.icon}"></i>
+                    </div>
+                    
+                    <div class="notification-content">
+                        <div class="notification-header-row">
+                            <span class="notification-title">${notification.title}</span>
+                            <span class="notification-time">
+                                <i class="far fa-clock"></i>
+                                ${notification.time}
+                            </span>
+                        </div>
+                        
+                        <p class="notification-message">${notification.message}</p>
+                        
+                        <div class="notification-meta">
+                            <span class="notification-type">
+                                <i class="fas ${getTypeIcon(notification.type)}"></i>
+                                ${getTypeText(notification.type)}
+                            </span>
+                            <a href="#" class="notification-target" onclick="handleNotificationClick('${notification.targetType}', '${notification.targetId}')">
+                                <i class="fas fa-link"></i>
+                                ${notification.targetName}
+                            </a>
+                        </div>
+                    </div>
+                    
+                    ${!notification.read ? '<span class="unread-dot"></span>' : ''}
+                    
+                    <button class="mark-read-btn" onclick="markAsRead(${notification.id})">
+                        <i class="fas fa-check"></i>
+                        Đánh dấu đã đọc
+                    </button>
+                </div>
+            `).join('');
+
+            updatePagination();
+        }
+
+        // Get type icon
+        function getTypeIcon(type) {
+            switch(type) {
+                case 'exam': return 'fa-pencil-alt';
+                case 'course': return 'fa-book';
+                case 'system': return 'fa-cog';
+                case 'warning': return 'fa-exclamation-triangle';
+                case 'comment': return 'fa-comment';
+                case 'achievement': return 'fa-trophy';
+                default: return 'fa-bell';
+            }
+        }
+
+        // Get type text
+        function getTypeText(type) {
+            switch(type) {
+                case 'exam': return 'Đề thi';
+                case 'course': return 'Khóa học';
+                case 'system': return 'Hệ thống';
+                case 'warning': return 'Cảnh báo';
+                case 'comment': return 'Bình luận';
+                case 'achievement': return 'Thành tích';
+                default: return 'Thông báo';
+            }
+        }
+
+        // Handle notification click (readAndRedirect)
+        function handleNotificationClick(targetType, targetId) {
+            // Simulate markAsReadAndGetTarget flow
+            try {
+                console.log(`Processing notification: ${targetType} - ${targetId}`);
+                
+                // Simulate API call to mark as read and get target
+                markAsReadAndGetTarget(targetType, targetId)
+                    .then(target => {
+                        // Verify target exists
+                        verifyTargetExists(target)
+                            .then(exists => {
+                                if (exists) {
+                                    // Decrement badge count
+                                    decrementBadgeCount();
+                                    
+                                    // Redirect to target
+                                    redirectToTarget(target);
+                                } else {
+                                    showError('Mục tiêu không tồn tại hoặc đã bị xóa');
+                                }
+                            })
+                            .catch(error => {
+                                showError('Lỗi xác thực mục tiêu');
+                            });
+                    })
+                    .catch(error => {
+                        showError('Lỗi xử lý thông báo');
+                    });
+            } catch (error) {
+                console.error('Error in readAndRedirect:', error);
+                showError('Đã xảy ra lỗi');
+            }
+        }
+
+        // Simulate markAsReadAndGetTarget API
+        function markAsReadAndGetTarget(targetType, targetId) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // Simulate success with 90% probability
+                    if (Math.random() < 0.9) {
+                        resolve({
+                            type: targetType,
+                            id: targetId,
+                            name: 'Sample Target',
+                            url: `#${targetType}-${targetId}`
+                        });
+                    } else {
+                        reject(new Error('Failed to get target'));
+                    }
+                }, 500);
+            });
+        }
+
+        // Verify target exists
+        function verifyTargetExists(target) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Simulate verification (90% success)
+                    resolve(Math.random() < 0.9);
+                }, 300);
+            });
+        }
+
+        // Decrement badge count
+        function decrementBadgeCount() {
+            const currentCount = parseInt(notificationCount.textContent);
+            if (currentCount > 0) {
+                notificationCount.textContent = (currentCount - 1) + ' mới';
+            }
+        }
+
+        // Redirect to target
+        function redirectToTarget(target) {
+            alert(`Điều hướng đến: ${target.type} - ${target.name}\nURL: ${target.url}`);
+            // window.location.href = target.url;
+        }
+
+        // Mark single notification as read
+        function markAsRead(notificationId) {
+            const notification = notifications.find(n => n.id === notificationId);
+            if (notification) {
+                notification.read = true;
+                renderNotifications();
+                updateNotificationCount();
+            }
+        }
+
+        // Mark all as read
+        document.getElementById('markAllReadBtn').addEventListener('click', function() {
+            notifications.forEach(n => n.read = true);
+            renderNotifications();
+            updateNotificationCount();
+            alert('Đã đánh dấu tất cả thông báo là đã đọc');
+        });
+
+        // Refresh button
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            fetchNotifications();
+        });
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                currentFilter = this.dataset.filter;
+                currentPage = 1;
+                
+                filterNotifications();
+            });
+        });
+
+        // Filter notifications
+        function filterNotifications() {
+            filteredNotifications = [...notifications];
+            
+            if (currentFilter === 'unread') {
+                filteredNotifications = filteredNotifications.filter(n => !n.read);
+            } else if (currentFilter !== 'all') {
+                filteredNotifications = filteredNotifications.filter(n => n.type === currentFilter);
+            }
+            
+            // Apply search
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                filteredNotifications = filteredNotifications.filter(n => 
+                    n.title.toLowerCase().includes(searchTerm) ||
+                    n.message.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderNotifications();
+            updateNotificationCount();
+        }
+
+        // Search
+        searchInput.addEventListener('input', function() {
+            currentPage = 1;
+            filterNotifications();
+        });
+
+        // Pagination
+        prevPage.addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderNotifications();
+            }
+        });
+
+        nextPage.addEventListener('click', function() {
+            const maxPage = Math.ceil(filteredNotifications.length / itemsPerPage);
+            if (currentPage < maxPage) {
+                currentPage++;
+                renderNotifications();
+            }
+        });
+
+        // Update pagination
+        function updatePagination() {
+            const totalItems = filteredNotifications.length;
+            const maxPage = Math.ceil(totalItems / itemsPerPage);
+            const start = (currentPage - 1) * itemsPerPage + 1;
+            const end = Math.min(start + itemsPerPage - 1, totalItems);
+
+            paginationInfo.textContent = `Hiển thị ${start}-${end} của ${totalItems} thông báo`;
+            prevPage.disabled = currentPage === 1;
+            nextPage.disabled = currentPage === maxPage;
+        }
+
+        // Update notification count
+        function updateNotificationCount() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            notificationCount.textContent = unreadCount > 0 ? unreadCount + ' mới' : '0 mới';
+            
+            if (unreadCount === 0) {
+                notificationCount.style.background = 'var(--text-light)';
+            } else {
+                notificationCount.style.background = 'var(--accent-color)';
+            }
+        }
+
+        // Loading states
+        function showLoading() {
+            loadingState.style.display = 'block';
+            notificationList.style.display = 'none';
+            emptyState.style.display = 'none';
+            errorMessage.style.display = 'none';
+        }
+
+        function hideLoading() {
+            loadingState.style.display = 'none';
+            notificationList.style.display = 'block';
+        }
+
+        function showEmptyState() {
+            loadingState.style.display = 'none';
+            notificationList.style.display = 'none';
+            emptyState.style.display = 'block';
+            errorMessage.style.display = 'none';
+        }
+
+        function showError(message) {
+            loadingState.style.display = 'none';
+            notificationList.style.display = 'none';
+            emptyState.style.display = 'none';
+            errorMessage.style.display = 'flex';
+            document.getElementById('errorText').textContent = message;
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Simulate loading more on scroll
+            notificationList.addEventListener('scroll', function() {
+                if (this.scrollTop + this.clientHeight >= this.scrollHeight - 100) {
+                    // Load more
+                    loadingMore.style.display = 'block';
+                    setTimeout(() => {
+                        loadingMore.style.display = 'none';
+                    }, 1000);
+                }
+            });
+        }
+
+        // Flow implementation based on your diagram
+        function getRecentNotifications() {
+            // 1.1: getRecentNotifications
+            console.log('Fetching recent notifications...');
+            
+            // 1.1.1: fetchNotificationsForUser
+            return fetchNotificationsForUser();
+        }
+
+        function fetchNotificationsForUser() {
+            // 1.1.1.1: query
+            console.log('Querying database...');
+            
+            // 1.1.1.2: List
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(notifications);
+                }, 500);
+            });
+        }
+
+        // Handle notification click with the full flow
+        function onNotificationClick(notificationId) {
+            // 1.2: Nhấn vào một thông báo
+            console.log(`Clicked notification ${notificationId}`);
+            
+            // 2.1: readAndRedirect
+            readAndRedirect(notificationId);
+        }
+
+        function readAndRedirect(notificationId) {
+            // 2.1.1: markAsReadAndGetTarget
+            markAsReadAndGetTargetFromId(notificationId)
+                .then(result => {
+                    if (result.error) {
+                        // 2.1.1.5: lỗi
+                        console.error('Error:', result.error);
+                        showError(result.error);
+                    } else {
+                        // 2.1.1.6: TargetType, TargetID
+                        const { targetType, targetId } = result;
+                        
+                        // 2.1.1.7: decrementBadgeCount
+                        decrementBadgeCount();
+                        
+                        // 2.1.1.8-2.1.1.211: targetEntity verification
+                        verifyTargetEntity(targetType, targetId);
+                    }
+                });
+        }
+
+        function markAsReadAndGetTargetFromId(notificationId) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const notification = notifications.find(n => n.id === notificationId);
+                    if (notification) {
+                        notification.read = true;
+                        resolve({
+                            targetType: notification.targetType,
+                            targetId: notification.targetId
+                        });
+                    } else {
+                        resolve({ error: 'Notification not found' });
+                    }
+                }, 300);
+            });
+        }
+
+        function verifyTargetEntity(targetType, targetId) {
+            // Simulate multiple verification attempts
+            console.log(`Verifying ${targetType} with ID ${targetId}...`);
+            
+            // This represents the multiple targetEntity calls in your diagram
+            const verificationSteps = 10;
+            for (let i = 1; i <= verificationSteps; i++) {
+                console.log(`Verification step ${i}/${verificationSteps}`);
+            }
+            
+            // Final verification
+            setTimeout(() => {
+                console.log('Target verified successfully');
+                // Redirect to target
+                window.location.href = `#${targetType}-${targetId}`;
+            }, 500);
+        }
+    </script>
+</body>
+</html>

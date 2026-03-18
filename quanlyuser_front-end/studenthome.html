@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Luyện Thi ĐGNL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --light-bg: #f3f4f6;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --overlay-color: rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header i {
+            font-size: 2rem;
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .student-info {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .student-info:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .student-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+            font-weight: bold;
+            border: 3px solid var(--white);
+            transition: transform 0.3s ease;
+        }
+
+        .student-info:hover .student-avatar {
+            transform: scale(1.05);
+        }
+
+        .student-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .student-email {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .student-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+
+        .menu-item {
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--white);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+            padding-left: 2rem;
+        }
+
+        .menu-item.active {
+            background: rgba(255,255,255,0.2);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .menu-item i {
+            width: 20px;
+            font-size: 1.2rem;
+        }
+
+        .menu-item span {
+            flex: 1;
+        }
+
+        .menu-badge {
+            background: var(--accent-color);
+            color: var(--white);
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--light-bg);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            width: 300px;
+        }
+
+        .search-box i {
+            color: var(--text-light);
+            margin-right: 0.5rem;
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-icon i {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: var(--white);
+            font-size: 0.6rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 50%;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-text h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text p {
+            opacity: 0.9;
+        }
+
+        .continue-btn {
+            background: var(--white);
+            color: var(--primary-color);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon i {
+            font-size: 1.8rem;
+            color: var(--white);
+        }
+
+        .stat-details {
+            flex: 1;
+        }
+
+        .stat-details h3 {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success-color);
+        }
+
+        .stat-change.negative {
+            color: var(--danger-color);
+        }
+
+        /* Section Title */
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title h3 {
+            font-size: 1.3rem;
+            color: var(--text-dark);
+        }
+
+        .view-all {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Course Grid */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .course-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .course-image {
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .course-tag {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent-color);
+            color: var(--white);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .course-content {
+            padding: 1.5rem;
+        }
+
+        .course-category {
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .course-instructor {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .course-instructor i {
+            font-size: 0.8rem;
+        }
+
+        .course-progress {
+            margin: 1rem 0;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--light-bg);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 4px;
+        }
+
+        .course-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-bg);
+        }
+
+        .course-lessons {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .course-lessons i {
+            margin-right: 0.3rem;
+        }
+
+        .continue-btn-small {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Upcoming Exams */
+        .exam-list {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .exam-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--light-bg);
+        }
+
+        .exam-item:last-child {
+            border-bottom: none;
+        }
+
+        .exam-date {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+        }
+
+        .exam-date .day {
+            font-size: 1.5rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .exam-date .month {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .exam-info {
+            flex: 1;
+        }
+
+        .exam-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .exam-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .exam-status {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .exam-status.upcoming {
+            background: #dbeafe;
+            color: var(--primary-color);
+        }
+
+        .exam-status.today {
+            background: #fee2e2;
+            color: var(--danger-color);
+        }
+
+        .exam-status.soon {
+            background: #fef3c7;
+            color: var(--warning-color);
+        }
+
+        /* Study Materials */
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .material-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .material-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .material-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--light-bg);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .material-info {
+            flex: 1;
+        }
+
+        .material-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .material-info p {
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        .download-btn {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        /* Performance Chart */
+        .performance-section {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .performance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .performance-header h3 {
+            font-size: 1.1rem;
+        }
+
+        .performance-select {
+            padding: 0.5rem;
+            border: 1px solid var(--light-bg);
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            height: 200px;
+        }
+
+        .chart-bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-bar {
+            width: 100%;
+            background: linear-gradient(to top, var(--primary-color), var(--secondary-color));
+            border-radius: 8px 8px 0 0;
+            transition: height 0.3s ease;
+        }
+
+        .chart-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay-color);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .profile-modal {
+            background: var(--white);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: var(--white);
+            font-size: 1.2rem;
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 3rem;
+            font-weight: bold;
+            border: 4px solid var(--white);
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .modal-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .profile-detail-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--light-bg);
+            transition: all 0.3s ease;
+        }
+
+        .profile-detail-item:hover {
+            background: var(--light-bg);
+            transform: translateX(5px);
+        }
+
+        .detail-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            margin-right: 1rem;
+        }
+
+        .detail-content {
+            flex: 1;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 0.2rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--light-bg);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+        }
+
+        .modal-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .modal-btn-secondary {
+            background: var(--light-bg);
+            color: var(--text-dark);
+        }
+
+        .modal-btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-modal {
+                width: 95%;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-graduation-cap"></i>
+                <h3>Student Portal</h3>
+            </div>
+            
+            <div class="student-info" onclick="openProfileModal()">
+                <div class="student-avatar">NA</div>
+                <div class="student-name">Nguyễn Văn A</div>
+                <div class="student-email">nguyenvana@student.edu</div>
+                <div class="student-badge">Gói Premium</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <a href="#" class="menu-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-book-open"></i>
+                    <span>Khóa học của tôi</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-pencil-alt"></i>
+                    <span>Luyện đề</span>
+                    <span class="menu-badge">3 mới</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Kết quả học tập</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Lịch thi</span>
+                    <span class="menu-badge">2</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-download"></i>
+                    <span>Tài liệu</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Hỏi đáp</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span>Diễn đàn</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Cài đặt</span>
+                </a>
+                <a href="#" class="menu-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Đăng xuất</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Tìm kiếm khóa học, đề thi...">
+                </div>
+                <div class="top-bar-actions">
+                    <div class="notification-icon">
+                        <i class="far fa-bell"></i>
+                        <span class="notification-badge">5</span>
+                    </div>
+                    <div class="notification-icon">
+                        <i class="far fa-envelope"></i>
+                        <span class="notification-badge">2</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="welcome-text">
+                    <h2>Chào mừng trở lại, Nguyễn Văn A! 👋</h2>
+                    <p>Tiếp tục luyện tập để chinh phục mục tiêu của bạn</p>
+                </div>
+                <a href="#" class="continue-btn">
+                    <i class="fas fa-play"></i>
+                    Tiếp tục học
+                </a>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Khóa học đang học</h3>
+                        <div class="stat-number">8</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +2 so với tuần trước
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-pencil-alt"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Đề đã làm</h3>
+                        <div class="stat-number">47</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +12 so với tháng trước
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Điểm trung bình</h3>
+                        <div class="stat-number">8.2</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +0.5 so với tháng trước
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Thời gian học</h3>
+                        <div class="stat-number">128h</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +24h so với tháng trước
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Performance Chart -->
+            <div class="performance-section">
+                <div class="performance-header">
+                    <h3>Tiến độ học tập theo môn</h3>
+                    <select class="performance-select">
+                        <option>7 ngày qua</option>
+                        <option>30 ngày qua</option>
+                        <option>3 tháng qua</option>
+                    </select>
+                </div>
+                <div class="chart-bars">
+                    <div class="chart-bar-item">
+                        <div class="chart-bar" style="height: 160px"></div>
+                        <span class="chart-label">Toán</span>
+                    </div>
+                    <div class="chart-bar-item">
+                        <div class="chart-bar" style="height: 140px"></div>
+                        <span class="chart-label">Văn</span>
+                    </div>
+                    <div class="chart-bar-item">
+                        <div class="chart-bar" style="height: 180px"></div>
+                        <span class="chart-label">Anh</span>
+                    </div>
+                    <div class="chart-bar-item">
+                        <div class="chart-bar" style="height: 120px"></div>
+                        <span class="chart-label">Lý</span>
+                    </div>
+                    <div class="chart-bar-item">
+                        <div class="chart-bar" style="height: 100px"></div>
+                        <span class="chart-label">Hóa</span>
+                    </div>
+                    <div class="chart-bar-item">
+                        <div class="chart-bar" style="height: 90px"></div>
+                        <span class="chart-label">Sinh</span>
+                    </div>
+                    <div class="chart-bar-item">
+                        <div class="chart-bar" style="height: 110px"></div>
+                        <span class="chart-label">Sử</span>
+                    </div>
+                    <div class="chart-bar-item">
+                        <div class="chart-bar" style="height: 130px"></div>
+                        <span class="chart-label">Địa</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Khóa học đang học -->
+            <div class="section-title">
+                <h3>Khóa học đang học</h3>
+                <a href="#" class="view-all">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="course-grid">
+                <div class="course-card">
+                    <div class="course-image" style="background-image: url('https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')">
+                        <span class="course-tag">Phổ biến</span>
+                    </div>
+                    <div class="course-content">
+                        <div class="course-category">Toán học</div>
+                        <div class="course-title">Luyện thi ĐGNL phần Toán</div>
+                        <div class="course-instructor">
+                            <i class="fas fa-user-tie"></i> Thầy Nguyễn Văn B
+                        </div>
+                        <div class="course-progress">
+                            <div class="progress-info">
+                                <span>Tiến độ: 75%</span>
+                                <span>15/20 bài</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-lessons">
+                                <i class="far fa-file-alt"></i> 20 bài học
+                            </span>
+                            <a href="#" class="continue-btn-small">
+                                Tiếp tục <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="course-card">
+                    <div class="course-image" style="background-image: url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')">
+                        <span class="course-tag">Mới</span>
+                    </div>
+                    <div class="course-content">
+                        <div class="course-category">Ngữ văn</div>
+                        <div class="course-title">Luyện thi ĐGNL phần Văn</div>
+                        <div class="course-instructor">
+                            <i class="fas fa-user-tie"></i> Cô Trần Thị C
+                        </div>
+                        <div class="course-progress">
+                            <div class="progress-info">
+                                <span>Tiến độ: 45%</span>
+                                <span>9/20 bài</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-lessons">
+                                <i class="far fa-file-alt"></i> 20 bài học
+                            </span>
+                            <a href="#" class="continue-btn-small">
+                                Tiếp tục <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="course-card">
+                    <div class="course-image" style="background-image: url('https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')">
+                        <span class="course-tag">Sắp kết thúc</span>
+                    </div>
+                    <div class="course-content">
+                        <div class="course-category">Tiếng Anh</div>
+                        <div class="course-title">Luyện thi ĐGNL phần Anh</div>
+                        <div class="course-instructor">
+                            <i class="fas fa-user-tie"></i> Cô Lê Thị D
+                        </div>
+                        <div class="course-progress">
+                            <div class="progress-info">
+                                <span>Tiến độ: 90%</span>
+                                <span>18/20 bài</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-lessons">
+                                <i class="far fa-file-alt"></i> 20 bài học
+                            </span>
+                            <a href="#" class="continue-btn-small">
+                                Tiếp tục <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lịch thi và Tài liệu -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <!-- Lịch thi -->
+                <div>
+                    <div class="section-title">
+                        <h3>Lịch thi sắp tới</h3>
+                        <a href="#" class="view-all">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <div class="exam-list">
+                        <div class="exam-item">
+                            <div class="exam-date">
+                                <span class="day">15</span>
+                                <span class="month">T11</span>
+                            </div>
+                            <div class="exam-info">
+                                <h4>Thi thử ĐGNL đợt 1</h4>
+                                <p><i class="far fa-clock"></i> 8:00 - 11:30</p>
+                            </div>
+                            <span class="exam-status today">Hôm nay</span>
+                        </div>
+                        
+                        <div class="exam-item">
+                            <div class="exam-date">
+                                <span class="day">20</span>
+                                <span class="month">T11</span>
+                            </div>
+                            <div class="exam-info">
+                                <h4>Thi thử ĐGNL đợt 2</h4>
+                                <p><i class="far fa-clock"></i> 14:00 - 17:30</p>
+                            </div>
+                            <span class="exam-status upcoming">Sắp tới</span>
+                        </div>
+                        
+                        <div class="exam-item">
+                            <div class="exam-date">
+                                <span class="day">25</span>
+                                <span class="month">T11</span>
+                            </div>
+                            <div class="exam-info">
+                                <h4>Thi thử ĐGNL đợt 3</h4>
+                                <p><i class="far fa-clock"></i> 8:00 - 11:30</p>
+                            </div>
+                            <span class="exam-status soon">Còn 5 ngày</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tài liệu gần đây -->
+                <div>
+                    <div class="section-title">
+                        <h3>Tài liệu gần đây</h3>
+                        <a href="#" class="view-all">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <div class="materials-grid" style="grid-template-columns: 1fr;">
+                        <div class="material-card">
+                            <div class="material-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="material-info">
+                                <h4>Công thức Toán 12</h4>
+                                <p>PDF • 2.5 MB • 15/11/2024</p>
+                            </div>
+                            <a href="#" class="download-btn">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="material-card">
+                            <div class="material-icon">
+                                <i class="fas fa-file-word"></i>
+                            </div>
+                            <div class="material-info">
+                                <h4>Đề thi thử số 5</h4>
+                                <p>DOCX • 1.8 MB • 14/11/2024</p>
+                            </div>
+                            <a href="#" class="download-btn">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="material-card">
+                            <div class="material-icon">
+                                <i class="fas fa-file-video"></i>
+                            </div>
+                            <div class="material-info">
+                                <h4>Bài giảng số 8 - Hình học</h4>
+                                <p>MP4 • 45 MB • 13/11/2024</p>
+                            </div>
+                            <a href="#" class="download-btn">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="material-card">
+                            <div class="material-icon">
+                                <i class="fas fa-file-powerpoint"></i>
+                            </div>
+                            <div class="material-info">
+                                <h4>Bài giảng số 9 - Hàm số</h4>
+                                <p>PPTX • 3.2 MB • 12/11/2024</p>
+                            </div>
+                            <a href="#" class="download-btn">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Đề thi gợi ý -->
+            <div class="section-title">
+                <h3>Đề thi gợi ý cho bạn</h3>
+                <a href="#" class="view-all">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="course-grid">
+                <div class="course-card">
+                    <div class="course-image" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')">
+                        <span class="course-tag">Đề số 1</span>
+                    </div>
+                    <div class="course-content">
+                        <div class="course-category">Đề thi thử</div>
+                        <div class="course-title">ĐGNL ĐHQG Hà Nội 2024</div>
+                        <div class="exam-info" style="display: flex; gap: 1rem; margin: 0.5rem 0;">
+                            <span><i class="far fa-clock"></i> 195 phút</span>
+                            <span><i class="fas fa-question-circle"></i> 150 câu</span>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-lessons">
+                                <i class="fas fa-users"></i> 1,234 đã làm
+                            </span>
+                            <a href="#" class="continue-btn-small">
+                                Làm ngay <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="course-card">
+                    <div class="course-image" style="background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')">
+                        <span class="course-tag">Đề số 2</span>
+                    </div>
+                    <div class="course-content">
+                        <div class="course-category">Đề thi thử</div>
+                        <div class="course-title">ĐGNL ĐHQG TP.HCM 2024</div>
+                        <div class="exam-info" style="display: flex; gap: 1rem; margin: 0.5rem 0;">
+                            <span><i class="far fa-clock"></i> 150 phút</span>
+                            <span><i class="fas fa-question-circle"></i> 120 câu</span>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-lessons">
+                                <i class="fas fa-users"></i> 987 đã làm
+                            </span>
+                            <a href="#" class="continue-btn-small">
+                                Làm ngay <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="course-card">
+                    <div class="course-image" style="background-image: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')">
+                        <span class="course-tag">Đề số 3</span>
+                    </div>
+                    <div class="course-content">
+                        <div class="course-category">Đề thi thử</div>
+                        <div class="course-title">ĐGNL Bộ Công an 2024</div>
+                        <div class="exam-info" style="display: flex; gap: 1rem; margin: 0.5rem 0;">
+                            <span><i class="far fa-clock"></i> 180 phút</span>
+                            <span><i class="fas fa-question-circle"></i> 100 câu</span>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-lessons">
+                                <i class="fas fa-users"></i> 756 đã làm
+                            </span>
+                            <a href="#" class="continue-btn-small">
+                                Làm ngay <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal" onclick="closeProfileModalOnOverlay(event)">
+        <div class="profile-modal">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeProfileModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="modal-avatar">NA</div>
+                <h2>Nguyễn Văn A</h2>
+                <p>nguyenvana@student.edu</p>
+                <div style="margin-top: 0.5rem; background: rgba(255,255,255,0.2); padding: 0.3rem 1rem; border-radius: 20px; display: inline-block; font-size: 0.8rem;">
+                    <i class="fas fa-crown"></i> Gói Premium
+                </div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Số điện thoại</div>
+                        <div class="detail-value">0123 456 789</div>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Ngày sinh</div>
+                        <div class="detail-value">15/05/2003</div>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-venus-mars"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Giới tính</div>
+                        <div class="detail-value">Nam</div>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Địa chỉ</div>
+                        <div class="detail-value">Quận 1, TP.HCM</div>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-school"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Trường học</div>
+                        <div class="detail-value">THPT Chuyên Lê Hồng Phong</div>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Lớp</div>
+                        <div class="detail-value">12A1</div>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Ngày tham gia</div>
+                        <div class="detail-value">01/09/2024</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-primary" onclick="editProfile()">
+                    <i class="fas fa-edit"></i>
+                    Chỉnh sửa
+                </button>
+                <button class="modal-btn modal-btn-secondary" onclick="closeProfileModal()">
+                    <i class="fas fa-times"></i>
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // Toggle sidebar on mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click event for menu items
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (!this.classList.contains('active')) {
+                        document.querySelector('.menu-item.active')?.classList.remove('active');
+                        this.classList.add('active');
+                    }
+                });
+            });
+            
+            // Notification click
+            const notificationIcons = document.querySelectorAll('.notification-icon');
+            notificationIcons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    alert('Bạn có thông báo mới');
+                });
+            });
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-box input');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                        alert('Tìm kiếm: ' + this.value);
+                    }
+                });
+            }
+            
+            // Continue learning buttons
+            const continueBtns = document.querySelectorAll('.continue-btn, .continue-btn-small');
+            continueBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                        alert('Chuyển đến trang học tập...');
+                    }, 200);
+                });
+            });
+            
+            // Download buttons
+            const downloadBtns = document.querySelectorAll('.download-btn');
+            downloadBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Đang tải tài liệu...');
+                });
+            });
+            
+            // Performance chart hover effect
+            const chartBars = document.querySelectorAll('.chart-bar');
+            chartBars.forEach(bar => {
+                bar.addEventListener('mouseenter', function() {
+                    this.style.opacity = '0.8';
+                });
+                bar.addEventListener('mouseleave', function() {
+                    this.style.opacity = '1';
+                });
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeProfileModal();
+                }
+            });
+        });
+
+        // Open profile modal
+        function openProfileModal() {
+            const modal = document.getElementById('profileModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        // Close profile modal
+        function closeProfileModal() {
+            const modal = document.getElementById('profileModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+
+        // Close modal when clicking on overlay (but not when clicking on modal content)
+        function closeProfileModalOnOverlay(event) {
+            if (event.target === event.currentTarget) {
+                closeProfileModal();
+            }
+        }
+
+        // Edit profile function
+        function editProfile() {
+            alert('Chuyển đến trang chỉnh sửa hồ sơ...');
+            // window.location.href = 'edit-profile.html';
+        }
+    </script>
+</body>
+</html>

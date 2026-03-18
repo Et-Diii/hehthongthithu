@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Luyện Thi ĐGNL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <!-- Left Side - Illustration -->
+        <div class="login-illustration">
+            <div class="illustration-content">
+                <div class="illustration-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h1 class="illustration-title">Chào mừng trở lại!</h1>
+                <p class="illustration-text">
+                    Đăng nhập để tiếp tục hành trình chinh phục kỳ thi Đánh giá năng lực
+                </p>
+                <ul class="feature-list">
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>5000+ câu hỏi trắc nghiệm</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>100+ đề thi thử các trường</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Theo dõi tiến độ học tập</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check"></i>
+                        <span>Phân tích điểm mạnh, điểm yếu</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="login-form">
+            <div class="form-header">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                    <span>Luyện Thi ĐGNL</span>
+                </div>
+                <h2>Đăng nhập</h2>
+                <p>Chưa có tài khoản? <a href="register.html" id="showRegister">Đăng ký ngay</a></p>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText"></span>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+                <!-- Username Field -->
+                <div class="input-group">
+                    <label for="username">
+                        <i class="fas fa-user"></i>
+                        Tên đăng nhập
+                    </label>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" name="username" placeholder="nhap_ten_dang_nhap" required>
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="input-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i>
+                        Mật khẩu
+                    </label>
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                        <i class="fas fa-eye" id="togglePassword"></i>
+                    </div>
+                </div>
+
+                <!-- Form Options -->
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember" checked>
+                        <span>Ghi nhớ đăng nhập</span>
+                    </label>
+                    <a href="forget-password.html" class="forgot-password" >Quên mật khẩu?</a>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Đăng nhập</span>
+                </button>
+            </form>
+
+            <!-- Register Link -->
+            <div class="register-link">
+                <p>
+                    Bằng việc đăng nhập, bạn đồng ý với 
+                    <a href="#">Điều khoản sử dụng</a> và 
+                    <a href="#">Chính sách bảo mật</a> của chúng tôi
+                </p>
+            </div>
+        </div>
+    </div>
+
+    
+    
+
+    <!-- JavaScript (GIỮ NGUYÊN LOGIC CŨ CỦA BẠN) -->
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Toggle Password Visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        if (togglePassword && passwordInput) {
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        }
+
+        // LOGIN FORM - GIỮ NGUYÊN LOGIC CŨ CỦA BẠN
+        const form = document.getElementById("loginForm");
+        const btn = document.getElementById("loginBtn");
+
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (!username || !password) {
+                showError("Nhập đủ username và password");
+                return;
+            }
+
+            // Lưu remember me
+            const remember = document.getElementById('remember').checked;
+            if (remember) {
+                localStorage.setItem("remember_username", username);
+            } else {
+                localStorage.removeItem("remember_username");
+            }
+
+            // Show loading
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang đăng nhập...';
+            btn.disabled = true;
+
+            fetch("http://localhost:8080/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(res => {
+                if (!res.ok) {
+                    if (res.status === 401) {
+                        throw new Error("Sai tài khoản hoặc mật khẩu");
+                    } else if (res.status === 404) {
+                        throw new Error("Tài khoản không tồn tại");
+                    } else {
+                        throw new Error("Có lỗi xảy ra, vui lòng thử lại sau");
+                    }
+                }
+                return res.json();
+            })
+            .then(data => {
+                console.log("DATA:", data);
+
+                // Lấy role
+                let role = null;
+                if (data.roles && data.roles.length > 0) {
+                    role = data.roles[0];
+                } else if (data.role) {
+                    role = data.role;
+                }
+
+                // Lưu thông tin
+                localStorage.setItem("token", data.token);
+                if (role) localStorage.setItem("role", role);
+                if (data.fullName) localStorage.setItem("fullName", data.fullName);
+                if (data.username) localStorage.setItem("username", data.username);
+
+                
+                // Redirect dựa theo role - GIỮ NGUYÊN LOGIC CŨ
+                if (role === "ADMIN") {
+                    window.location.href = "studenthome.html";
+                } else if (role === "STUDENT") {
+                    window.location.href = "studenthome.html";
+                } else {
+                    window.location.href = "home.html";
+                }
+            })
+            .catch(err => {
+                showError(err.message);
+            })
+            .finally(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        });
+
+        // Show error function
+        function showError(msg) {
+            const err = document.getElementById("errorMessage");
+            const text = document.getElementById("errorText");
+
+            text.innerText = msg;
+            err.style.display = "flex";
+
+            setTimeout(() => {
+                err.style.display = "none";
+            }, 3000);
+        }
+
+        
+
+        
+
+        // Input focus effects
+        const inputs = document.querySelectorAll('.input-field input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.style.boxShadow = '0 0 0 3px rgba(108, 99, 255, 0.1)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+                this.parentElement.style.boxShadow = 'none';
+            });
+        });
+
+        // Auto-fill remembered username
+        const rememberedUsername = localStorage.getItem("remember_username");
+        if (rememberedUsername) {
+            document.getElementById('username').value = rememberedUsername;
+            document.getElementById('remember').checked = true;
+        }
+    });
+    </script>
+</body>
+</html>
