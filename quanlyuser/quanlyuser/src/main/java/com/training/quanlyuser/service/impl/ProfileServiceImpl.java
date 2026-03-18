@@ -37,12 +37,13 @@ public class ProfileServiceImpl implements ProfileService {
         User user = getCurrentUser();
 
         ProfileResponse res = new ProfileResponse();
+        res.setUsername(user.getUsername());
         res.setFullName(user.getFullName());
         res.setEmail(user.getEmail());
         res.setPhone(user.getPhone());
         res.setAddress(user.getAddress());
         res.setSchool(user.getSchool());
-        res.setDob(user.getDob());
+        res.setDateOfBirth(user.getDob());
         res.setAvatar(user.getAvatarUrl());
 
         return res;
@@ -61,36 +62,45 @@ public class ProfileServiceImpl implements ProfileService {
         user.setPhone(request.getPhone());
         user.setAddress(request.getAddress());
         user.setSchool(request.getSchool());
-        user.setDob(request.getDob());
+        user.setDob(request.getDateOfBirth());
 
-        // upload avatar
-        if (request.getAvatar() != null && !request.getAvatar().isEmpty()) {
-            String avatarUrl = uploadFile(request.getAvatar());
-            user.setAvatarUrl(avatarUrl);
-        }
 
         userRepository.save(user);
     }
 
     // =========================
     // ✅ 3. CHANGE PASSWORD
-    // =========================
+    // Thay đổi tham số truyền vào, thêm String username
     @Override
-    public void changePassword(ChangePasswordRequest request) {
+    public void changePassword(String username, ChangePasswordRequest request) {
 
-        User user = getCurrentUser();
+        // Tìm user dựa trên username được truyền từ Controller xuống
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User không tồn tại"));
 
-        // check confirm password
+        // ❌ check null
+        if (request.getCurrentPassword() == null ||
+                request.getNewPassword() == null ||
+                request.getConfirmPassword() == null) {
+            throw new RuntimeException("Không được để trống");
+        }
+
+        // ❌ confirm password
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new RuntimeException("Xác nhận mật khẩu không khớp");
         }
 
-        // check password cũ
+        // ❌ password cũ sai
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Mật khẩu hiện tại không đúng");
         }
 
-        // update password
+        // ❌ không cho trùng mật khẩu cũ
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPasswordHash())) {
+            throw new RuntimeException("Mật khẩu mới phải khác mật khẩu cũ");
+        }
+
+        // ✅ update
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }

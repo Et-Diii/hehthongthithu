@@ -6,20 +6,22 @@ import java.time.LocalDate;
 
 @Data
 public class ProfileResponse {
-    private String fullName;
-    private String email;
-    private String phone;
-    private String address;
-    private String school;
-    private LocalDate dob;
-    private String avatar;
 
-    public String getFullName() {
-        return fullName;
+        private String username;
+        private String email;
+        private String fullName;
+        private String phone;
+        private String address;
+        private LocalDate dateOfBirth;
+        private String school;
+        private String avatar;
+
+    public String getUsername() {
+        return username;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
@@ -30,12 +32,12 @@ public class ProfileResponse {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getAddress() {
@@ -46,20 +48,28 @@ public class ProfileResponse {
         this.address = address;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public String getSchool() {
         return school;
     }
 
     public void setSchool(String school) {
         this.school = school;
-    }
-
-    public LocalDate getDob() {
-        return dob;
-    }
-
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
     }
 
     public String getAvatar() {

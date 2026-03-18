@@ -11,9 +11,8 @@ public class UpdateProfileRequest {
     private String email;
     private String phone;
     private String address;
+    private LocalDate dateOfBirth;
     private String school;
-    private LocalDate dob;
-    private MultipartFile avatar;
 
     public String getFullName() {
         return fullName;
@@ -47,27 +46,19 @@ public class UpdateProfileRequest {
         this.address = address;
     }
 
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public String getSchool() {
         return school;
     }
 
     public void setSchool(String school) {
         this.school = school;
-    }
-
-    public LocalDate getDob() {
-        return dob;
-    }
-
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
-    }
-
-    public MultipartFile getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(MultipartFile avatar) {
-        this.avatar = avatar;
     }
 }

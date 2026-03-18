@@ -10,5 +10,5 @@ public interface ProfileService {
 
     void updateProfile(UpdateProfileRequest request);
 
-    void changePassword(ChangePasswordRequest request);
+    void changePassword(String username, ChangePasswordRequest request);
 }
