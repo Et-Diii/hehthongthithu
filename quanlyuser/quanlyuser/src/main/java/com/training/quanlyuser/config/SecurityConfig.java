@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class SecurityConfig {
+//hà hồng dương -12/3/2026
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

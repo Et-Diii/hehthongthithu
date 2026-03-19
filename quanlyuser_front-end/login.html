@@ -211,13 +211,17 @@
 
                 
                 // Redirect dựa theo role - GIỮ NGUYÊN LOGIC CŨ
-                if (role === "ADMIN") {
-                    window.location.href = "studenthome.html";
-                } else if (role === "STUDENT") {
-                    window.location.href = "studenthome.html";
-                } else {
-                    window.location.href = "home.html";
-                }
+                if (role === "ADMIN") { 
+    window.location.href = "adminhome.html";
+} else if (role === "STUDENT") {
+    window.location.href = "studenthome.html";
+} else if (role === "TEACHER") {
+    window.location.href = "teacherhome.html";
+} else if (role === "ACADEMIC_MANAGER") {
+    window.location.href = "managerhome.html";
+} else {
+    window.location.href = "home.html";
+}
             })
             .catch(err => {
                 showError(err.message);

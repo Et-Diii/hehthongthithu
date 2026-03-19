@@ -77,8 +77,7 @@ public class UserManagementService {
         existing.setEmail(request.getEmail());
         existing.setFullName(request.getFullName());
 
-        // --- BỔ SUNG: Cập nhật Số điện thoại (SĐT) ---
-        // Sửa getPhone() thành tên hàm tương ứng trong UserRequest của bạn (VD: getSdt())
+
         if (request.getPhone() != null && !request.getPhone().isEmpty()) {
             existing.setPhone(request.getPhone());
         }

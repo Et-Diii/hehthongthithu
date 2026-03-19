@@ -2,6 +2,8 @@ package com.training.quanlyuser.dto.request;
 
 import java.time.LocalDate;
 
+
+//hà hồng dương -12/3/2026
 public class RegisterRequest {
 
     private String username;

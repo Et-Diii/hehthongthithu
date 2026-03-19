@@ -1,5 +1,7 @@
 package com.training.quanlyuser.dto.request;
 
+
+//hà hồng dương -12/3/2026
 public class ResetPasswordRequest {
     private String token;
     private String newPassword;

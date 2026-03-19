@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*") // Phải có cái này để file HTML (khác port) gọi được API
+
+//hà hồng dương -17/3/2026
+ // Phải có cái này để file HTML (khác port) gọi được API
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor

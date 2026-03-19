@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            font-size: 20px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card i {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .card h3 {
+            margin: 10px 0 5px;
+        }
+
+        .card p {
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    Academic Management
+</div>
+
+<div class="container">
+    <div class="grid">
+
+        <div class="card" onclick="goPage('subjects.html')">
+            <i class="fas fa-book"></i>
+            <h3>Subjects</h3>
+            <p>Quản lý môn học</p>
+        </div>
+
+        <div class="card" onclick="goPage('classes.html')">
+            <i class="fas fa-school"></i>
+            <h3>Classes</h3>
+            <p>Quản lý lớp học</p>
+        </div>
+
+        <div class="card" onclick="goPage('students.html')">
+            <i class="fas fa-users"></i>
+            <h3>Students</h3>
+            <p>Danh sách học sinh</p>
+        </div>
+
+        <div class="card" onclick="goPage('assignments.html')">
+            <i class="fas fa-file-alt"></i>
+            <h3>Assignments</h3>
+            <p>Bài tập</p>
+        </div>
+
+        <div class="card" onclick="goPage('grades.html')">
+            <i class="fas fa-chart-line"></i>
+            <h3>Grades</h3>
+            <p>Chấm điểm</p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function goPage(page) {
+    window.location.href = page;
+}
+</script>
+
+</body>
+</html>

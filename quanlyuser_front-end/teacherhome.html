@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            background: #f4f6f9;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+        }
+
+        .menu-item {
+            padding: 12px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .menu-item:hover {
+            background: #34495e;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>Teacher</h2>
+    <div class="menu-item"><i class="fas fa-home"></i> Dashboard</div>
+    <div class="menu-item"><i class="fas fa-book"></i> Quản lý khóa học</div>
+    <div class="menu-item"><i class="fas fa-users"></i> Học sinh</div>
+    <div class="menu-item"><i class="fas fa-file-alt"></i> Bài kiểm tra</div>
+    <div class="menu-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+</div>
+
+<div class="content">
+    <h1>Teacher Dashboard</h1>
+
+    <div class="card-container">
+        <div class="card">
+            <h3>10</h3>
+            <p>Khóa học</p>
+        </div>
+
+        <div class="card">
+            <h3>120</h3>
+            <p>Học sinh</p>
+        </div>
+
+        <div class="card">
+            <h3>5</h3>
+            <p>Bài kiểm tra</p>
+        </div>
+
+        <div class="card">
+            <h3>3</h3>
+            <p>Lớp đang dạy</p>
+        </div>
+    </div>
+</div>
+
+<script>
+function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>

@@ -2,6 +2,8 @@ package com.training.quanlyuser.dto.request;
 
 import lombok.Data;
 
+
+//hà hồng dương -16/3/2026
 @Data
 public class ChangePasswordRequest {
     private String currentPassword;

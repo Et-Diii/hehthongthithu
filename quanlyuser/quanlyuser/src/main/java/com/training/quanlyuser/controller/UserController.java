@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+//hà hồng dương -18/3/2026
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/users")
